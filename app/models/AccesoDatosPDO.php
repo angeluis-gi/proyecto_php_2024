@@ -208,7 +208,7 @@ class AccesoDatos
   //Funcion para sacar el siguiente ID que será creado
   public function obtenerSiguienteID()
   {
-    $consulta = $this->dbh->query("SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'clientes' AND TABLE_NAME = 'Clientes'");
+    $consulta = $this->dbh->query("SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'Clientes' AND TABLE_NAME = 'Clientes'");
     $auto_increment = $consulta->fetchColumn();
     return $auto_increment;
   }
@@ -235,7 +235,7 @@ class AccesoDatos
   public function getUsuario($login)
   {
     $user = false;
-    $stmt_user = $this->dbh->prepare("SELECT * FROM user WHERE login=:login");
+    $stmt_user = $this->dbh->prepare("SELECT * FROM User WHERE login=:login");
     $stmt_user->setFetchMode(PDO::FETCH_CLASS, 'Usuario');
     $stmt_user->bindParam(':login', $login);
     if ($stmt_user->execute()) {
