@@ -1,0 +1,19 @@
+login		cfuke0
+password	xEBkIT
+rol		1
+
+login		ipietruschka1
+password	pdzUgn
+rol		1
+
+login		abibey3
+password	qQd1k5
+rol		0
+
+login		karrowsmith6
+password	Fn4kmN
+rol		0
+
+login		cdiviny7
+password	rbHp8t
+rol		1
