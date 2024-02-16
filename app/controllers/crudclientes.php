@@ -251,32 +251,40 @@ function crudPostModificar()
 
   $error = [];
   $db = AccesoDatos::getModelo();
-  if (!$db->comprobarCorreo($cli, "mod")) {
-    $error[] = "Correo ya existente.</br>";
-  }
-  $regexCorreo = "/^([a-zA-Z0-9\.]+@+[a-zA-Z]+(\.)+[a-zA-Z]{2,3})$/";
-  if (preg_match($regexCorreo, $cli->email) == 0) {
-    $error[] = "Formato de correo incorrecto.</br>";
-  }
-  if (!filter_var($cli->ip_address, FILTER_VALIDATE_IP)) {
-    $error[] = "Formato de IP incorrecto.</br>";
-  }
-  $regexpTel = "/^\d{3}-\d{3}-\d{4}$/";
-  if (!preg_match($regexpTel, $cli->telefono)) {
-    $error[] = "Formato de teléfono incorrecto.</br>";
-  }
-  if (count($error) === 0) {
-    if ($db->modCliente($cli)) {
-      $_SESSION['msg'] = "El usuario " . $cli->first_name . " ha sido modificado.</br>";
+  $cli_orig = $db->getCliente($cli->id);
+
+  //comprobamos si hay algun campo cambiado respecto a la informacion original para determinar si se debe ejecutar la funcion de modCliente
+  if ($cli != $cli_orig) {
+    if (!$db->comprobarCorreo($cli, "mod")) {
+      $error[] = "Correo ya existente.</br>";
+    }
+    $regexCorreo = "/^([a-zA-Z0-9\.]+@+[a-zA-Z]+(\.)+[a-zA-Z]{2,3})$/";
+    if (preg_match($regexCorreo, $cli->email) == 0) {
+      $error[] = "Formato de correo incorrecto.</br>";
+    }
+    if (!filter_var($cli->ip_address, FILTER_VALIDATE_IP)) {
+      $error[] = "Formato de IP incorrecto.</br>";
+    }
+    $regexpTel = "/^\d{3}-\d{3}-\d{4}$/";
+    if (!preg_match($regexpTel, $cli->telefono)) {
+      $error[] = "Formato de teléfono incorrecto.</br>";
+    }
+    if (count($error) === 0) {
+      if ($db->modCliente($cli)) {
+        $_SESSION['msg'] = "El usuario " . $cli->first_name . " ha sido modificado.</br>";
+      } else {
+        $_SESSION['msg'] = "Error al modificar el usuario " . $cli->first_name . ".</br>";
+      }
     } else {
       $_SESSION['msg'] = "Error al modificar el usuario " . $cli->first_name . ".</br>";
+      foreach ($error as $valor) {
+        $_SESSION['msg'] .= $valor;
+      }
     }
   } else {
-    $_SESSION['msg'] = "Error al modificar el usuario " . $cli->first_name . ".</br>";
-    foreach ($error as $valor) {
-      $_SESSION['msg'] .= $valor;
-    }
+    $_SESSION['msg'] = "";
   }
+
   if(is_uploaded_file($_FILES['imagen_subida']['tmp_name'])){
     if (!verificarImagen()) {
       $_SESSION['msg'] .= "Error con el tamaño o formato de la imagen.</br>";
