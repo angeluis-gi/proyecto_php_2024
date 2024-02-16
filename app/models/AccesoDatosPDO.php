@@ -154,13 +154,8 @@ class AccesoDatos
     $stmt_moduser->bindValue(':ip_address', $cli->ip_address);
     $stmt_moduser->bindValue(':telefono', $cli->telefono);
     $stmt_moduser->bindValue(':id', $cli->id);
-    $regexIP = "/^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/";
-    $regexpTel = "/^\d{3}-\d{3}-\d{4}$/";
-
-    if (self::comprobarCorreo($cli, "mod") && preg_match($regexIP, $cli->ip_address) && preg_match($regexpTel, $cli->telefono)) {
-      $stmt_moduser->execute();
-      $resu = ($stmt_moduser->rowCount() == 1);
-    }
+    $stmt_moduser->execute();
+    $resu = ($stmt_moduser->rowCount() == 1);
     return $resu;
   }
 
@@ -228,8 +223,6 @@ class AccesoDatos
   {
     trigger_error('La clonación no permitida', E_USER_ERROR);
   }
-
-
 
   // SELECT Devuelvo un usuario o false
   public function getUsuario($login)
