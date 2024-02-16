@@ -190,11 +190,13 @@ function crudPostAlta()
       $_SESSION['msg'] .= $valor;
     }
   }
-  if (!verificarImagen()) {
-    $_SESSION['msg'] .= "Error con el tamaño o formato de la imagen.</br>";
-  } else {
-    if (!almacenarImagen()) {
-      $_SESSION['msg'] .= "Error al subir la imagen.</br>";
+  if (is_uploaded_file($_FILES['imagen_subida']['tmp_name'])){
+    if (!verificarImagen()) {
+      $_SESSION['msg'] .= "Error con el tamaño o formato de la imagen.</br>";
+    } else {
+      if (!cambiarImagen($cli)) {
+        $_SESSION['msg'] .= "Error al subir la imagen.</br>";
+      }
     }
   }
 }
