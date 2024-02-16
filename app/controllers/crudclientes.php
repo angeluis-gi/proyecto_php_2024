@@ -48,19 +48,29 @@ function obtenerImagen($cli): array
 {
   // formato de imagen: 00000XXX.jpg para el cliente con id XXX
   $img_id = str_pad($cli->id, 8, "0", STR_PAD_LEFT); // rellena el string a la izquierda con ceros hasta alcanzar 8 caracteres
-  $imgsrc = "app/uploads/" . $img_id . ".jpg";
-  if (!file_exists($imgsrc)) {
+  $rutajpg = "app/uploads/" . $img_id . ".jpg";
+  $rutapng = "app/uploads/" . $img_id . ".png";
+  if (!file_exists($rutajpg) && !file_exists($rutapng)) {
     $imagen = array(
       "url"  => 'https://robohash.org/' . $img_id . '.PNG',
       "msg"  => '<img src="https://robohash.org/' . $img_id . '" alt="imagen del usuario ' . $cli->id . '">',
       "form" => '<tr><td>imagen actual:</td><td><img src="https://robohash.org/' . $img_id . '" alt="imagen del usuario ' . $cli->id . '"></td></tr>'
     );
   } else {
-    $imagen = array(
-      "url" => $imgsrc,
-      "msg" => '<img src="' . $imgsrc . '" alt="imagen del usuario ' . $cli->id . '">',
-      "form" => '<tr><td>imagen actual:</td><td><img src="' . $imgsrc . '" alt="imagen del usuario ' . $cli->id . '"></td></tr>'
-    );
+    if (file_exists($rutajpg)) {
+      $imagen = array(
+        "url" => $rutajpg,
+        "msg" => '<img src="' . $rutajpg . '" alt="imagen del usuario ' . $cli->id . '">',
+        "form" => '<tr><td>imagen actual:</td><td><img src="' . $rutajpg . '" alt="imagen del usuario ' . $cli->id . '"></td></tr>'
+      );
+    } else if (file_exists($rutapng)) {
+      $imagen = array(
+        "url" => $rutapng,
+        "msg" => '<img src="' . $rutapng . '" alt="imagen del usuario ' . $cli->id . '">',
+        "form" => '<tr><td>imagen actual:</td><td><img src="' . $rutapng . '" alt="imagen del usuario ' . $cli->id . '"></td></tr>'
+      );
+    }
+    
   }
   return $imagen;
 }
@@ -267,11 +277,15 @@ function crudPostModificar()
       $_SESSION['msg'] .= $valor;
     }
   }
-  if (!verificarImagen()) {
-    $_SESSION['msg'] .= "Error con el tamaño o formato de la imagen.</br>";
-  } else {
-    if (!cambiarImagen($cli)) {
-      $_SESSION['msg'] .= "Error al subir la imagen.</br>";
+  if(is_uploaded_file($_FILES['imagen_subida']['tmp_name'])){
+    if (!verificarImagen()) {
+      $_SESSION['msg'] .= "Error con el tamaño o formato de la imagen.</br>";
+    } else {
+      if (!cambiarImagen($cli)) {
+        $_SESSION['msg'] .= "Error al subir la imagen.</br>";
+      } else {
+        $_SESSION['msg'] .= "La imagen del usuario " . $cli->first_name . " ha sido modificada.</br>";
+      }
     }
   }
 }
